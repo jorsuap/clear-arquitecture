@@ -18,4 +18,8 @@ export class GetAlbumUseCases {
   getAllAlbums(): Observable <Array<Album>> {
     return this._albumGetaway.getAll();
   }
+
+  saveAlbum(_album: Album): Observable<void> {
+    return this._albumGetaway.saveNew(_album);
+  }
 }

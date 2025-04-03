@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { GetAlbumUseCases } from '../../../domain/use-case/get-album-use-case';
+import { GetAlbumUseCases } from '../../../domain/use-case/album-use-case';
 import { Album } from '../../../domain/models/Album/album';
 import { Observable } from 'rxjs';
 import { CircularProgressComponent } from '../../components/circular-progress/circular-progress.component';
@@ -13,9 +13,11 @@ import { CircularProgressComponent } from '../../components/circular-progress/ci
 })
 
 export class AlbumComponent implements OnInit {
-  constructor(private _getAlbumUseCase: GetAlbumUseCases) { }
   response$: Observable<Album> | undefined;
   datos?: Album;
+
+  constructor(private _getAlbumUseCase: GetAlbumUseCases) { }
+
   ngOnInit(): void {
     this.response$ = this._getAlbumUseCase.getAlbumById('20');
     this.response$.subscribe(
