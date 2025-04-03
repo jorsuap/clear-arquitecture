@@ -1,124 +1,68 @@
-# 📚 Arquitectura Limpia en Angular
+# Arquitectura Limpia en Angular
 
-Este proyecto sigue los principios de **Arquitectura Limpia (Clean Architecture)**, un enfoque que busca una separación clara de responsabilidades, mejorando la mantenibilidad, escalabilidad y testabilidad del código.
+## 📖 ¿Qué es la Arquitectura Limpia?
+La **Arquitectura Limpia** es un patrón de diseño de software que busca organizar el código de manera modular y escalable, separando las responsabilidades en capas bien definidas. Su objetivo principal es desacoplar la lógica de negocio de la infraestructura y la interfaz de usuario, facilitando el mantenimiento, la prueba y la reutilización del código.
 
-## 🔍 ¿Qué es la Arquitectura Limpia?
-
-La **Arquitectura Limpia** fue propuesta por **Robert C. Martin (Uncle Bob)** y se basa en la organización del código en capas bien definidas. Su principal objetivo es separar la lógica de negocio de los detalles de implementación, logrando así:
-
-✅ **Independencia del framework** → El código no depende directamente de Angular, lo que facilita su migración a otras tecnologías.  
-✅ **Testabilidad** → Al estar modularizado, las pruebas unitarias e integración son más sencillas.  
-✅ **Mantenibilidad** → Facilita la incorporación de nuevas funcionalidades sin afectar el código existente.  
-✅ **Escalabilidad** → La estructura permite que el proyecto crezca de manera ordenada.  
+En el contexto de Angular, se estructura el proyecto dividiendo la aplicación en capas de **dominio**, **infraestructura**, **estado** y **UI**, asegurando una separación clara de responsabilidades y promoviendo buenas prácticas de desarrollo.
 
 ---
 
-## 🏗️ **Estructura del Proyecto**
+## 📂 Estructura del Proyecto
 
-```plaintext
+```bash
 /src
  ├── app/
- │   ├── config/                # ⚙️ Configuraciones generales
- │   ├── domain/                # 🏛️ Reglas de negocio por módulo
- │   │   ├── user/
- │   │   │   ├── models/
- │   │   │   ├── usecases/
- │   │   ├── product/
- │   │   │   ├── models/
- │   │   │   ├── usecases/
- │   ├── infrastructure/        # 🏗️ Adaptadores técnicos
- │   │   ├── api/               # 🌍 Servicios HTTP
- │   │   ├── persistence/       # 💾 Almacenamiento local
- │   │   ├── websocket/         # 🔗 Comunicación en tiempo real
- │   ├── state/                 # 🔄 Gestión de estado global (NgRx)
- │   │   ├── user/
- │   │   │   ├── facades/
- │   │   │   ├── actions/
- │   │   │   ├── reducers/
- │   │   │   ├── selectors/
- │   │   │   ├── effects/
- │   │   ├── product/
- │   │   │   ├── facades/
- │   │   │   ├── actions/
- │   │   │   ├── reducers/
- │   │   │   ├── selectors/
- │   │   │   ├── effects/
- │   ├── UI/                    # 🎨 Interfaz de usuario
- │   │   ├── components/
- │   │   ├── pages/
- │   │   ├── main/
- │   ├── shared/                 # 🔄 Recursos reutilizables
- │   │   ├── components/         # 🧩 Componentes comunes
- │   │   ├── directives/         # ✨ Directivas personalizadas
- │   │   ├── pipes/              # 🔄 Pipes reutilizables
- │   │   ├── services/           # ⚙️ Servicios genéricos
- │   │   ├── utils/              # 🛠️ Funciones utilitarias
+ │   ├── config/                # ⚙️ Configuraciones generales de la aplicación
+ │   │   ├── app.config.ts      # 🛠️ Configuración global de la app
+ │   │   ├── app.routes.ts      # 🗺️ Definición de rutas de la aplicación
+ │   │
+ │   ├── domain/                # 🏛️ Lógica de negocio y reglas de dominio
+ │   │   ├── models/            # 📂 Definición de modelos de datos
+ │   │   │   ├── model/         # 📝 Modelos específicos de cada entidad
+ │   │   │   │   ├── gateways/  # 🔌 Interfaces que definen contratos para la infraestructura
+ │   │   ├── usecases/          # 🎯 Casos de uso que contienen la lógica de aplicación
+ │   │
+ │   ├── infrastructure/        # 🏗️ Implementaciones técnicas y adaptadores externos
+ │   │   ├── driven-adapter/    # 🔌 Adaptadores para interactuar con APIs, bases de datos, etc.
+ │   │   │   ├── api/           # 🌍 Llamadas HTTP a servicios externos
+ │   │
+ │   ├── state/                 # 🔄 Gestión del estado global con NgRx
+ │   │   ├── actions/           # ⚡ Definición de acciones para cambiar el estado
+ │   │   ├── effects/           # 🔁 Lógica asíncrona y efectos secundarios
+ │   │   ├── reducers/          # 🔄 Reductores que modifican el estado global
+ │   │   ├── selectors/         # 🔍 Métodos para obtener información del estado
+ │   │   ├── facades/           # 🎭 Intermediarios entre la UI y el estado global
+ │   │   ├── state.ts           # 📌 Definición del estado centralizado
+ │   │
+ │   ├── UI/                    # 🎨 Componentes de presentación y páginas de la app
+ │   │   ├── components/        # 🧩 Componentes reutilizables y presentacionales
+ │   │   ├── pages/             # 📄 Páginas de la aplicación (pantallas principales)
+ │   │   ├── main/              # 🏠 Punto de entrada de la interfaz
  │
- ├── assets/                    # 🖼️ Recursos estáticos
- ├── environments/               # 🌍 Configuraciones de entornos
-```
-
-## 📌 Explicación de cada capa
-
-- **config/** → Contiene configuraciones generales de la aplicación, como rutas y variables globales.
-- **domain/** → Implementa la lógica de negocio y casos de uso.
-  - `models/` → Definición de modelos y entidades.
-  - `usecases/` → Casos de uso que aplican reglas de negocio.
-- **infrastructure/** → Contiene adaptadores para interactuar con APIs, almacenamiento y otros servicios externos.
-  - `api/` → Servicios HTTP.
-  - `persistence/` → Manejo de almacenamiento local (localStorage, sessionStorage, IndexedDB).
-  - `websocket/` → Comunicación en tiempo real.
-- **state/** → Implementación de NgRx para gestionar el estado global.
-  - `facades/` → Proporcionan una capa de abstracción para interactuar con el store.
-  - `actions/` → Definen las acciones que modifican el estado.
-  - `reducers/` → Reducen los cambios en el estado global.
-  - `selectors/` → Métodos para extraer datos del store.
-  - `effects/` → Manejan efectos secundarios (llamadas a APIs, etc.).
-- **UI/** → Componentes de presentación y páginas de la app.
-  - `components/` → Componentes reutilizables.
-  - `pages/` → Páginas principales.
-  - `main/` → Punto de entrada de la interfaz.
-- **shared/** → Contiene recursos reutilizables en toda la aplicación.
-  - `components/` → Componentes comunes.
-  - `directives/` → Directivas personalizadas.
-  - `pipes/` → Pipes reutilizables.
-  - `services/` → Servicios genéricos.
-  - `utils/` → Funciones utilitarias.
-- **assets/** → Contiene imágenes, fuentes y otros recursos estáticos.
-- **environments/** → Configuración de entornos (`dev`, `prod`, etc.).
-
----
-
-## 🛠️ Tecnologías Utilizadas
-
-- **Angular** → Framework frontend
-- **TypeScript** → Lenguaje de programación
-- **NgRx** → Gestión del estado
-- **RxJS** → Programación reactiva
-- **Jest** → Pruebas unitarias
-
----
-
-## 🚀 Instalación y Ejecución
-
-1️⃣ Clona este repositorio:
-```bash
-git clone https://github.com/tu-usuario/tu-repo.git
-```
-
-2️⃣ Instala las dependencias:
-```bash
-npm install
-```
-
-3️⃣ Ejecuta el proyecto en modo desarrollo:
-```bash
-ng serve
+ ├── assets/                    # 🖼️ Recursos estáticos como imágenes, fuentes y estilos
+ ├── environments/               # 🌍 Configuraciones de entornos (dev, prod, etc.)
 ```
 
 ---
 
-## 📄 Licencia
+## 🔥 Beneficios de esta Arquitectura
+✔ **Mantenibilidad**: Separar responsabilidades facilita la modificación del código sin afectar otras capas.
+✔ **Escalabilidad**: Permite agregar nuevas funcionalidades sin afectar el núcleo de la aplicación.
+✔ **Reutilización**: Los casos de uso y modelos pueden reutilizarse en diferentes partes de la aplicación.
+✔ **Pruebas más sencillas**: La independencia entre capas facilita la creación de pruebas unitarias y de integración.
+✔ **Modularidad**: Se pueden reemplazar o modificar partes del sistema sin afectar el resto.
 
-Este proyecto está bajo la licencia **MIT**.
+---
+
+## 🛠️ Recomendaciones
+- Mantén los **casos de uso** en la capa de **dominio**, no en los componentes.
+- Evita que la **UI** acceda directamente a la **infraestructura**, usa **facades** en la capa de **estado**.
+- Los **gateways** definen contratos que las implementaciones en **infraestructura** deben seguir.
+- Mantén la lógica de **negocio** en los **usecases**, no en los servicios Angular.
+- Usa **selectors** para obtener datos del estado y **effects** para manejar efectos secundarios en NgRx.
+
+---
+
+## 📌 Conclusión
+Esta arquitectura permite una aplicación Angular bien estructurada, modular y fácil de mantener. Siguiendo este esquema, garantizamos un código más limpio y organizado, alineado con las mejores prácticas de desarrollo.
 
